@@ -7,12 +7,15 @@
 import React, { Component } from 'react';
 import { AppRegistry, Image} from 'react-native'
 import AgoraModule from './components/android/agora'
+import SurfaceView from './components/android/SurfaceView'
 
 import {
   Platform,
   StyleSheet,
   Text,
-  View
+  Button,
+  View,
+  Alert
 } from 'react-native';
 
 const instructions = Platform.select({
@@ -32,6 +35,12 @@ class Greeeting extends Component {
 }
 
 export default class App extends Component<{}> {
+  _joinChannel() {
+    //Alert.alert('You tapped the button!')
+    AgoraModule.startPreview();
+    AgoraModule.joinChannel();
+  }
+
   render() {
     AgoraModule.show('Call java method', AgoraModule.SHORT);
 
@@ -42,7 +51,12 @@ export default class App extends Component<{}> {
     return (
       <View style = {styles.container} >
         <Greeeting text='Greeting from react world' />
-        <Image source = {pic} style = { {width: 360, height: 640}} />
+        <SurfaceView style = { {width: 360, height: 480}} />
+        <Button
+          onPress={this._joinChannel}
+          title="Join Channel"
+          color="#841584"
+        />
       </View>
     );
   }
