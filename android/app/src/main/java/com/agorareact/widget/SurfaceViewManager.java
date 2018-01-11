@@ -2,10 +2,13 @@ package com.agorareact.widget;
 
 import android.view.SurfaceView;
 
+import com.agorareact.AgoraPackage;
 import com.agorareact.MainApplication;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
+
+import java.lang.ref.WeakReference;
 
 import io.agora.rtc.RtcEngine;
 
@@ -15,6 +18,11 @@ import io.agora.rtc.RtcEngine;
 
 public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     public static final String REACT_CLASS = "SurfaceView";
+    private WeakReference<AgoraPackage> mAgoraPackage;
+
+    public SurfaceViewManager(AgoraPackage agoraPackage) {
+        mAgoraPackage = new WeakReference<AgoraPackage>(agoraPackage);
+    }
 
     @Override
     public String getName() {
@@ -25,7 +33,11 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     protected SurfaceView createViewInstance(ThemedReactContext reactContext) {
         //MainApplication app = (MainApplication)(reactContext.getApplicationContext());
         //SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
-        return RtcEngine.CreateRendererView(reactContext);
+        SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
+        if (mAgoraPackage.get() != null) {
+            mAgoraPackage.get().addSurface(surfaceView.hashCode(), surfaceView);
+        }
+        return surfaceView;
     }
 
     @ReactProp(name = "width", defaultInt = 360)

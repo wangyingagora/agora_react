@@ -5,10 +5,12 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import com.agorareact.AgoraPackage;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,8 @@ public class AgoraModule extends ReactContextBaseJavaModule {
 
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mHandler;
+
+    private WeakReference<AgoraPackage> mAgoraPackage;
 
     public AgoraModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -107,6 +111,10 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         }
     }
 
+    public void setAgoraPackage(AgoraPackage agoraPackage) {
+        mAgoraPackage = new WeakReference<AgoraPackage>(agoraPackage);
+    }
+
     @Override
     public String getName() {
         return "AgoraModule";
@@ -126,7 +134,12 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setupLocalVideo(SurfaceView view, int uid) {
+    public void setupLocalVideo(int key, int uid) {
+        if (mAgoraPackage.get() == null) return;
+
+        SurfaceView view = mAgoraPackage.get().getSurfaceView(key);
+        if (view == null) return;
+
         mRtcEngine.setupLocalVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         view.setZOrderOnTop(true);
         view.setZOrderMediaOverlay(true);
