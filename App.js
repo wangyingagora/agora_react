@@ -37,6 +37,7 @@ class Greeeting extends Component {
 export default class App extends Component<{}> {
   _joinChannel() {
     //Alert.alert('You tapped the button!')
+    AgoraModule.setupLocalVideo(this._surfaceView, 0);
     AgoraModule.startPreview();
     AgoraModule.joinChannel();
   }
@@ -51,7 +52,11 @@ export default class App extends Component<{}> {
     return (
       <View style = {styles.container} >
         <Greeeting text='Greeting from react world' />
-        <SurfaceView style = { {width: 360, height: 480}} />
+        <SurfaceView 
+          style = { {width: 360, height: 480}}
+          ref={(SurfaceViewput) => { this._surfaceView = SurfaceView; }}
+          //ref={component => this._surfaceView = component}
+         />
         <Button
           onPress={this._joinChannel}
           title="Join Channel"
