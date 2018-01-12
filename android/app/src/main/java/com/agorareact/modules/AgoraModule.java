@@ -134,7 +134,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setupLocalVideo(int key, int uid) {
+    public void setupLocalVideo(String key, int uid) {
         if (mAgoraPackage.get() == null) return;
 
         SurfaceView view = mAgoraPackage.get().getSurfaceView(key);
@@ -153,5 +153,12 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startPreview() {
         mRtcEngine.startPreview();
+    }
+
+    @ReactMethod
+    public void removeView(String viewId) {
+        if (mAgoraPackage.get() == null) return;
+
+        mAgoraPackage.get().removeSurfaceView(viewId);
     }
 }

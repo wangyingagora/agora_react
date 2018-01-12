@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 public class AgoraPackage implements ReactPackage {
-    private Map<Integer, SurfaceView> mSurfaceViews = new HashMap<>();
+    private Map<String, SurfaceView> mSurfaceViews = new HashMap<>();
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
@@ -41,11 +41,15 @@ public class AgoraPackage implements ReactPackage {
         );
     }
 
-    public void addSurface(int key, SurfaceView value) {
+    public void addSurface(String key, SurfaceView value) {
         mSurfaceViews.put(key, value);
     }
 
-    public SurfaceView getSurfaceView(int key) {
+    public SurfaceView getSurfaceView(String key) {
         return mSurfaceViews.get(key);
+    }
+
+    public void removeSurfaceView(String key) {
+        mSurfaceViews.remove(key);
     }
 }

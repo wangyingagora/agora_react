@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, Image} from 'react-native'
+import { AppRegistry, Image, ReactNative} from 'react-native'
 import AgoraModule from './components/android/agora'
 import SurfaceView from './components/android/SurfaceView'
 
@@ -35,10 +35,17 @@ class Greeeting extends Component {
 }
 
 export default class App extends Component<{}> {
+  componentDidMount() {}
+
+  componentWillUnmount() {
+    AgoraModule.removeView('1111');
+  }
+
   _joinChannel() {
     //Alert.alert('You tapped the button!')
-    Alert.alert(this._surfaceView);
-    //AgoraModule.setupLocalVideo(this._surfaceView.hashCode(), 0);
+    //var handle = ReactNative.findNodeHandle(this._surfaceView);
+    //Alert.alert(this._surfaceView.uniqueId + " come");
+    AgoraModule.setupLocalVideo('1111', 0);
     AgoraModule.startPreview();
     AgoraModule.joinChannel();
   }
@@ -54,12 +61,13 @@ export default class App extends Component<{}> {
       <View style = {styles.container} >
         <Greeeting text='Greeting from react world' />
         <SurfaceView 
+          uniqueId='1111'
           style = { {width: 360, height: 480}}
-          //ref={(SurfaceView) => { this._surfaceView = SurfaceView; }}
           ref={component => this._surfaceView = component}
+          //ref='_surfaceView'
          />
         <Button
-          onPress={this._joinChannel}
+          onPress={this._joinChannel.bind(this)}
           title="Join Channel"
           color="#841584"
         />

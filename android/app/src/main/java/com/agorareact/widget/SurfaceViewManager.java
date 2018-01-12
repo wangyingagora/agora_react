@@ -1,9 +1,11 @@
 package com.agorareact.widget;
 
+import android.util.Log;
 import android.view.SurfaceView;
 
 import com.agorareact.AgoraPackage;
 import com.agorareact.MainApplication;
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -34,9 +36,6 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         //MainApplication app = (MainApplication)(reactContext.getApplicationContext());
         //SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
-        if (mAgoraPackage.get() != null) {
-            mAgoraPackage.get().addSurface(surfaceView.hashCode(), surfaceView);
-        }
         return surfaceView;
     }
 
@@ -48,5 +47,13 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     @ReactProp(name = "height", defaultInt = 480)
     public void setHeight(SurfaceView view, int height) {
         view.getHolder().setFixedSize(view.getWidth(), height);
+    }
+
+    @ReactProp(name = "uniqueId")
+    public void setViewUniqueId(SurfaceView view, String id) {
+        view.setTag(id);
+        if (mAgoraPackage.get() != null) {
+            mAgoraPackage.get().addSurface(id, view);
+        }
     }
 }
