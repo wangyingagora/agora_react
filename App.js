@@ -45,9 +45,13 @@ export default class App extends Component<{}> {
     //Alert.alert('You tapped the button!')
     //var handle = ReactNative.findNodeHandle(this._surfaceView);
     //Alert.alert(this._surfaceView.uniqueId + " come");
+
+    AgoraModule.callAPI('setupLocalVideo', ['1111', 0])
+    /*
     AgoraModule.setupLocalVideo('1111', 0);
     AgoraModule.startPreview();
     AgoraModule.joinChannel();
+    */
   }
 
   render() {

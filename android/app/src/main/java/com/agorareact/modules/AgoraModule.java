@@ -10,11 +10,19 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.agora.rtc.Constants;
@@ -166,15 +174,48 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void callAPI(String api, String args) {
+    public void callAPI(String api, ReadableArray args) {
         try {
-            Method m = mRtcEngine.getClass().getMethod(api, args.getClass());
+            Class<?>[] cls = new Class<?>[args.size()];
+            Object[] parameters = new Object[args.size()];
+            for (int i = 0; i < args.size(); ++i) {
+                Object obj = null;
+                switch (args.getType(i)) {
+                    case Null:
+                        parameters[i] = null;
+                        cls[i] = obj.getClass();
+                        continue;
+                    case Boolean:
+                        obj = args.getBoolean(i);
+                        continue;
+                    case Number:
+                        obj = args.getDouble(i);
+                        continue;
+                    case String:
+                        obj = args.getString(i);
+                        continue;
+                    case Map:
+                        Log.e(TAG, "No support for array or map parameters at moment");
+                        return;
+                    case Array:
+                        Log.e(TAG, "No support for array or map parameters at moment");
+                        return;
+                }
+
+                if (obj == null) {
+                    obj = new Object();
+                }
+                cls[i] = obj.getClass();
+            }
+            Method m = mRtcEngine.getClass().getMethod(api, cls);
             m.invoke(mRtcEngine, args);
         } catch (NoSuchMethodException ex) {
             Log.e(TAG, ex.toString());
         } catch (IllegalAccessException ex) {
             Log.e(TAG, ex.toString());
         } catch (InvocationTargetException ex) {
+            Log.e(TAG, ex.toString());
+        } catch (Exception ex) {
             Log.e(TAG, ex.toString());
         }
     }
