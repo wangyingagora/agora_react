@@ -12,6 +12,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +27,8 @@ import io.agora.rtc.video.VideoCanvas;
  */
 
 public class AgoraModule extends ReactContextBaseJavaModule {
+    private final static String TAG = AgoraModule.class.getSimpleName();
+
     private static final String DURATION_SHORT_KEY = "SHORT";
     private static final String DURATION_LONG_KEY = "LONG";
 
@@ -153,11 +157,25 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             //mRtcEngine.setVideoSource(mSource);
             //mRtcEngine.setLocalVideoRenderer(mRender);
 
-            //mRtcEngine.startPreview();
+            mRtcEngine.startPreview();
 
         } catch (Exception ex) {
             Log.e("RCTNative", ex.toString());
             mRtcEngine = null;
+        }
+    }
+
+    @ReactMethod
+    public void callAPI(String api, String args) {
+        try {
+            Method m = mRtcEngine.getClass().getMethod(api, args.getClass());
+            m.invoke(mRtcEngine, args);
+        } catch (NoSuchMethodException ex) {
+            Log.e(TAG, ex.toString());
+        } catch (IllegalAccessException ex) {
+            Log.e(TAG, ex.toString());
+        } catch (InvocationTargetException ex) {
+            Log.e(TAG, ex.toString());
         }
     }
 
