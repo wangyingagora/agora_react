@@ -6,6 +6,7 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.agorareact.AgoraPackage;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -27,88 +28,16 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     private static final String DURATION_SHORT_KEY = "SHORT";
     private static final String DURATION_LONG_KEY = "LONG";
 
+    private ReactApplicationContext mReactContext;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mHandler;
 
     private WeakReference<AgoraPackage> mAgoraPackage;
+    private WeakReference<Callback> mCallback;
 
     public AgoraModule(ReactApplicationContext reactContext) {
         super(reactContext);
-
-        mHandler = new IRtcEngineEventHandler() {
-            @Override
-            public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                super.onJoinChannelSuccess(channel, uid, elapsed);
-            }
-
-            @Override
-            public void onRejoinChannelSuccess(String channel, int uid, int elapsed) {
-                super.onRejoinChannelSuccess(channel, uid, elapsed);
-            }
-
-            @Override
-            public void onWarning(int warn) {
-                super.onWarning(warn);
-            }
-
-            @Override
-            public void onError(int err) {
-                super.onError(err);
-            }
-
-            @Override
-            public void onCameraFocusAreaChanged(Rect rect) {
-                super.onCameraFocusAreaChanged(rect);
-            }
-
-            @Override
-            public void onLeaveChannel(RtcStats stats) {
-                super.onLeaveChannel(stats);
-            }
-
-            @Override
-            public void onRtcStats(RtcStats stats) {
-                super.onRtcStats(stats);
-            }
-
-            @Override
-            public void onUserJoined(int uid, int elapsed) {
-                super.onUserJoined(uid, elapsed);
-            }
-
-            @Override
-            public void onUserOffline(int uid, int reason) {
-                super.onUserOffline(uid, reason);
-            }
-
-
-            @Override
-            public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
-                super.onFirstRemoteVideoDecoded(uid, width, height, elapsed);
-            }
-        };
-
-        try {
-            mRtcEngine = RtcEngine.create(reactContext, "aab8b8f5a8cd4469a63042fcfafe7063", mHandler);
-            mRtcEngine.setParameters("{\"rtc.log_filter\": 65535}");
-            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
-            mRtcEngine.enableVideo();
-            mRtcEngine.enableDualStreamMode(true);
-
-            mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_480P, false);
-            mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
-
-            //mSource = new AgoraVideoSource();
-            //mRender = new AgoraVideoRender(0, true);
-            //mRtcEngine.setVideoSource(mSource);
-            //mRtcEngine.setLocalVideoRenderer(mRender);
-
-            //mRtcEngine.startPreview();
-
-        } catch (Exception ex) {
-            Log.e("RCTNative", ex.toString());
-            mRtcEngine = null;
-        }
+        mReactContext = reactContext;
     }
 
     public void setAgoraPackage(AgoraPackage agoraPackage) {
@@ -131,6 +60,105 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void show(String message, int duration) {
         Toast.makeText(getReactApplicationContext(), message, duration).show();
+    }
+
+    @ReactMethod
+    public void create(String appId, Callback callback) {
+        mCallback = new WeakReference<Callback>(callback);
+
+        mHandler = new IRtcEngineEventHandler() {
+            @Override
+            public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+                if (canCallack()) {
+                    mCallback.get().invoke(channel, uid, elapsed);
+                }
+            }
+
+            @Override
+            public void onRejoinChannelSuccess(String channel, int uid, int elapsed) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(channel, uid, elapsed);
+                }
+            }
+
+            @Override
+            public void onWarning(int warn) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(warn);
+                }
+            }
+
+            @Override
+            public void onError(int err) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(err);
+                }
+            }
+
+            @Override
+            public void onCameraFocusAreaChanged(Rect rect) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(rect);
+                }
+            }
+
+            @Override
+            public void onLeaveChannel(RtcStats stats) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(stats);
+                }
+            }
+
+            @Override
+            public void onRtcStats(RtcStats stats) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(stats);
+                }
+            }
+
+            @Override
+            public void onUserJoined(int uid, int elapsed) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(uid, elapsed);
+                }
+            }
+
+            @Override
+            public void onUserOffline(int uid, int reason) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(uid, reason);
+                }
+            }
+
+            @Override
+            public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
+                if (canCallack()) {
+                    //mCallback.get().invoke(uid, width, height, elapsed);
+                }
+            }
+        };
+
+        try {
+            mRtcEngine = RtcEngine.create(mReactContext, appId, mHandler);
+            mRtcEngine.setParameters("{\"rtc.log_filter\": 65535}");
+            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
+            mRtcEngine.enableVideo();
+            mRtcEngine.enableDualStreamMode(true);
+
+            mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_480P, false);
+            mRtcEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+
+            //mSource = new AgoraVideoSource();
+            //mRender = new AgoraVideoRender(0, true);
+            //mRtcEngine.setVideoSource(mSource);
+            //mRtcEngine.setLocalVideoRenderer(mRender);
+
+            //mRtcEngine.startPreview();
+
+        } catch (Exception ex) {
+            Log.e("RCTNative", ex.toString());
+            mRtcEngine = null;
+        }
     }
 
     @ReactMethod
@@ -160,5 +188,10 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         if (mAgoraPackage.get() == null) return;
 
         mAgoraPackage.get().removeSurfaceView(viewId);
+    }
+
+    private boolean canCallack() {
+        if (mCallback == null || mCallback.get() == null) return false;
+        return true;
     }
 }

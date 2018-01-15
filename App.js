@@ -53,6 +53,12 @@ export default class App extends Component<{}> {
   render() {
     AgoraModule.show('Call java method', AgoraModule.SHORT);
 
+    appId = "";
+    AgoraModule.create(appId, (channel, uid, elapsed) => {
+      Alert.alert("uid " + channel);
+    });
+  
+
     let pic = {
       uri: 'http://g.hiphotos.baidu.com/image/pic/item/241f95cad1c8a786c7dedcc46e09c93d71cf5007.jpg'
     };
