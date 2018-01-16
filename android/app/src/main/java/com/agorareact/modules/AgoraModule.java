@@ -201,7 +201,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     parameters[i] = args.getBoolean(i);
                     continue;
                 case Number:
-                    parameters[i] = args.getInt(i);
+                    parameters[i] = args.getDouble(i);
                     continue;
                 case String:
                     parameters[i] = args.getString(i);
@@ -217,7 +217,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
 
         if (mInternalMethods.containsKey(api)) {
             if (api.equals("setupLocalVideo")) {
-                setupLocalVideo((String)parameters[0], (Integer) parameters[1]);
+                setupLocalVideo((String)parameters[0], ((Double)parameters[1]).intValue());
             }
         } else {
             callAPI(api, parameters);
@@ -278,6 +278,13 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         try {
             Method m = mMethods.get(api);
             int n = args.length;
+
+            Class<?>[] cls = m.getParameterTypes();
+            for (int i = 0; i < n; ++i) {
+                if (cls[i].equals(Integer.TYPE)) {
+                    args[i] = ((Double)args[i]).intValue();
+                }
+            }
             switch (n) {
                 case 0:
                     callAPI0(m, args);
