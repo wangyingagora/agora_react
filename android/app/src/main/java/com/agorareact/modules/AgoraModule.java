@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
@@ -43,6 +44,9 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     private ReactApplicationContext mReactContext;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mHandler;
+
+    private ConcurrentHashMap<String, Method> mMethods = new ConcurrentHashMap<>();
+    private Map<String, Boolean> mInternalMethods = new HashMap<>();
 
     private WeakReference<AgoraPackage> mAgoraPackage;
     private WeakReference<Callback> mCallback;
@@ -152,6 +156,10 @@ public class AgoraModule extends ReactContextBaseJavaModule {
 
         try {
             mRtcEngine = RtcEngine.create(mReactContext, appId, mHandler);
+
+            initPublicAPI();
+            initInternalAPI();
+
             mRtcEngine.setParameters("{\"rtc.log_filter\": 65535}");
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.enableVideo();
@@ -174,54 +182,50 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void callAPI(String api, ReadableArray args) {
-        try {
-            Class<?>[] cls = new Class<?>[args.size()];
-            Object[] parameters = new Object[args.size()];
-            for (int i = 0; i < args.size(); ++i) {
-                Object obj = null;
-                switch (args.getType(i)) {
-                    case Null:
-                        parameters[i] = null;
-                        cls[i] = obj.getClass();
-                        continue;
-                    case Boolean:
-                        obj = args.getBoolean(i);
-                        continue;
-                    case Number:
-                        obj = args.getDouble(i);
-                        continue;
-                    case String:
-                        obj = args.getString(i);
-                        continue;
-                    case Map:
-                        Log.e(TAG, "No support for array or map parameters at moment");
-                        return;
-                    case Array:
-                        Log.e(TAG, "No support for array or map parameters at moment");
-                        return;
-                }
+    public void destroy() {
+        mMethods.clear();
+        mInternalMethods.clear();
 
-                if (obj == null) {
-                    obj = new Object();
-                }
-                cls[i] = obj.getClass();
-            }
-            Method m = mRtcEngine.getClass().getMethod(api, cls);
-            m.invoke(mRtcEngine, args);
-        } catch (NoSuchMethodException ex) {
-            Log.e(TAG, ex.toString());
-        } catch (IllegalAccessException ex) {
-            Log.e(TAG, ex.toString());
-        } catch (InvocationTargetException ex) {
-            Log.e(TAG, ex.toString());
-        } catch (Exception ex) {
-            Log.e(TAG, ex.toString());
-        }
+        RtcEngine.destroy();
     }
 
     @ReactMethod
-    public void setupLocalVideo(String key, int uid) {
+    public void callAPI(String api, ReadableArray args) {
+        Object[] parameters = new Object[args.size()];
+        for (int i = 0; i < args.size(); ++i) {
+            switch (args.getType(i)) {
+                case Null:
+                    parameters[i] = null;
+                    continue;
+                case Boolean:
+                    parameters[i] = args.getBoolean(i);
+                    continue;
+                case Number:
+                    parameters[i] = args.getInt(i);
+                    continue;
+                case String:
+                    parameters[i] = args.getString(i);
+                    continue;
+                case Map:
+                    Log.e(TAG, "No support for array or map parameters at moment");
+                    return;
+                case Array:
+                    Log.e(TAG, "No support for array or map parameters at moment");
+                    return;
+            }
+        }
+
+        if (mInternalMethods.containsKey(api)) {
+            if (api.equals("setupLocalVideo")) {
+                setupLocalVideo((String)parameters[0], (Integer) parameters[1]);
+            }
+        } else {
+            callAPI(api, parameters);
+        }
+    }
+
+    //@ReactMethod
+    private void setupLocalVideo(String key, int uid) {
         if (mAgoraPackage.get() == null) return;
 
         SurfaceView view = mAgoraPackage.get().getSurfaceView(key);
@@ -232,8 +236,8 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         view.setZOrderMediaOverlay(true);
     }
 
-    @ReactMethod
-    public void joinChannel() {
+    //@ReactMethod
+    private void joinChannel() {
         mRtcEngine.joinChannel(null, "1234", "ARCore with RtcEngine", 0);
     }
 
@@ -249,8 +253,104 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         mAgoraPackage.get().removeSurfaceView(viewId);
     }
 
+    private void initPublicAPI() {
+        Method[] methods = mRtcEngine.getClass().getDeclaredMethods();
+        for (Method m : methods) {
+            String name = m.getName();
+            if (name.startsWith("native")) {
+                continue;
+            }
+
+            mMethods.put(name, m);
+        }
+    }
+
+    private void initInternalAPI() {
+        mInternalMethods.put("setupLocalVideo", true);
+    }
+
     private boolean canCallack() {
         if (mCallback == null || mCallback.get() == null) return false;
         return true;
+    }
+
+    private void callAPI(String api, Object[] args) {
+        try {
+            Method m = mMethods.get(api);
+            int n = args.length;
+            switch (n) {
+                case 0:
+                    callAPI0(m, args);
+                    break;
+                case 1:
+                    callAPI1(m, args);
+                    break;
+                case 2:
+                    callAPI2(m, args);
+                    break;
+                case 3:
+                    callAPI3(m, args);
+                    break;
+                case 4:
+                    callAPI4(m, args);
+                    break;
+                case 5:
+                    callAPI5(m, args);
+                    break;
+                case 6:
+                    callAPI6(m, args);
+                    break;
+                case 7:
+                    callAPI7(m, args);
+                    break;
+                default:
+                    Log.e(TAG, "Need add more callAPI methods");
+                    break;
+            }
+        } catch (IllegalAccessException ex) {
+            Log.e(TAG, ex.toString());
+        } catch (InvocationTargetException ex) {
+            Log.e(TAG, ex.toString());
+        }
+    }
+
+    private void callAPI0(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine);
+    }
+
+    private void callAPI1(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0]);
+    }
+
+    private void callAPI2(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1]);
+    }
+
+    private void callAPI3(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1], args[2]);
+    }
+
+    private void callAPI4(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1], args[2] ,args[3]);
+    }
+
+    private void callAPI5(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1], args[2], args[3], args[4]);
+    }
+
+    private void callAPI6(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+    }
+
+    private void callAPI7(Method method, Object[] args) throws InvocationTargetException,
+            IllegalAccessException {
+        method.invoke(mRtcEngine, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
     }
 }

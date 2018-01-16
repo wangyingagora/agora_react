@@ -47,6 +47,9 @@ export default class App extends Component<{}> {
     //Alert.alert(this._surfaceView.uniqueId + " come");
 
     AgoraModule.callAPI('setupLocalVideo', ['1111', 0])
+    AgoraModule.callAPI('startPreview', [])
+    //token, channelName, String optionalInfo, int optionalUid
+    AgoraModule.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
     /*
     AgoraModule.setupLocalVideo('1111', 0);
     AgoraModule.startPreview();
