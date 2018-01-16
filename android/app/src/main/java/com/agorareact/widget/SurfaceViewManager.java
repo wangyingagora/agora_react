@@ -33,20 +33,18 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
 
     @Override
     protected SurfaceView createViewInstance(ThemedReactContext reactContext) {
-        //MainApplication app = (MainApplication)(reactContext.getApplicationContext());
-        //SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
         SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
         return surfaceView;
     }
 
     @ReactProp(name = "width", defaultInt = 360)
     public void setWidth(SurfaceView view, int width) {
-        view.getHolder().setFixedSize(width, view.getHeight());
+        view.getHolder().setFixedSize(width, 480);
     }
 
     @ReactProp(name = "height", defaultInt = 480)
     public void setHeight(SurfaceView view, int height) {
-        view.getHolder().setFixedSize(view.getWidth(), height);
+        view.getHolder().setFixedSize(360, height);
     }
 
     @ReactProp(name = "uniqueId")

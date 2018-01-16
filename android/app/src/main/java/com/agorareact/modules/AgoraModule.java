@@ -149,6 +149,14 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             @Override
             public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
                 if (canCallack()) {
+                    if (mAgoraPackage.get() == null) return;
+
+                    SurfaceView view = mAgoraPackage.get().getSurfaceView("2222");
+                    if (view == null) return;
+
+                    view.setZOrderOnTop(true);
+                    view.setZOrderMediaOverlay(true);
+                    mRtcEngine.setupRemoteVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                     //mCallback.get().invoke(uid, width, height, elapsed);
                 }
             }

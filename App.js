@@ -75,10 +75,19 @@ export default class App extends Component<{}> {
         <Greeeting text='Greeting from react world' />
         <SurfaceView 
           uniqueId='1111'
-          style = { {width: 360, height: 480}}
+          style = { {width: 240, height: 320}}
           ref={component => this._surfaceView = component}
-          //ref='_surfaceView'
-         />
+        />
+        <View style = {styles.remote} >
+          <SurfaceView 
+            uniqueId='2222'
+            style = { {width: 96, height: 96}}
+          />
+          <SurfaceView 
+            uniqueId='3333'
+            style = { {width: 96, height: 96}}
+          />
+        </View>
         <Button
           onPress={this._joinChannel.bind(this)}
           title="Join Channel"
@@ -96,6 +105,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  remote: {
+    width: 360,
+    height: 96,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   welcome: {
     fontSize: 20,
