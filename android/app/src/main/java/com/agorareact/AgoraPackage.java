@@ -21,31 +21,36 @@ import java.util.Map;
  */
 
 public class AgoraPackage implements ReactPackage {
-    private Map<String, SurfaceView> mSurfaceViews = new HashMap<>();
-    private List<ViewManager> mViewManagers = new ArrayList<>();
-    private List<NativeModule> mModules = new ArrayList<>();
+    private AgoraModule mModule;
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        //List<NativeModule> modules = new ArrayList<>();
+        List<NativeModule> modules = new ArrayList<>();
 
-        AgoraModule m = new AgoraModule(reactContext);
-        m.setAgoraPackage(this);
-        mModules.add(m);
-        return mModules;
+        if (mModule == null) {
+            mModule = new AgoraModule(reactContext);
+            mModule.setAgoraPackage(this);
+        }
+
+        modules.add(mModule);
+        return modules;
     }
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         //return Collections.emptyList();
-        mViewManagers.add(new SurfaceViewManager(this));
-        return mViewManagers;
-        /*return Arrays.<ViewManager>asList(
-                new SurfaceViewManager(this)
-        );*/
+        //mViewManagers.add(new SurfaceViewManager(this));
+        //return mViewManagers;
+        if (mModule == null) {
+            mModule = new AgoraModule(reactContext);
+            mModule.setAgoraPackage(this);
+        }
+        return Arrays.<ViewManager>asList(
+                new SurfaceViewManager(mModule)
+        );
     }
 
-    public SurfaceViewManager getSurfaceViewManager() {
+    /*public SurfaceViewManager getSurfaceViewManager() {
         return (SurfaceViewManager)mViewManagers.get(0);
     }
 
@@ -63,5 +68,5 @@ public class AgoraPackage implements ReactPackage {
 
     public void removeSurfaceView(String key) {
         mSurfaceViews.remove(key);
-    }
+    }*/
 }

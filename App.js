@@ -39,7 +39,7 @@ export default class App extends Component<{}> {
   componentDidMount() {}
 
   componentWillUnmount() {
-    AgoraModule.removeView('1111');
+    //AgoraModule.removeView('1111');
   }
 
   _joinChannel() {
@@ -51,7 +51,7 @@ export default class App extends Component<{}> {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this._surfaceView),
       UIManager.SurfaceView.Commands.localVideo,
-      [0]
+      [240, 320, 0]
     );
     AgoraModule.callAPI('startPreview', [])
     //token, channelName, String optionalInfo, int optionalUid

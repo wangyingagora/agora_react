@@ -5,6 +5,7 @@ import android.view.SurfaceView;
 
 import com.agorareact.AgoraPackage;
 import com.agorareact.MainApplication;
+import com.agorareact.modules.AgoraModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
@@ -28,10 +29,10 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
 
     public static final int COMMAND_SET_LOCAL_VIDEO = 1;
 
-    private WeakReference<AgoraPackage> mAgoraPackage;
+    private WeakReference<AgoraModule> mAgoraModule;
 
-    public SurfaceViewManager(AgoraPackage agoraPackage) {
-        mAgoraPackage = new WeakReference<AgoraPackage>(agoraPackage);
+    public SurfaceViewManager(AgoraModule agoraModule) {
+        mAgoraModule = new WeakReference<AgoraModule>(agoraModule);
     }
 
     @Override
@@ -57,13 +58,10 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         view.getHolder().setFixedSize(360, height);
     }
 
-    @ReactProp(name = "uniqueId")
+    /*@ReactProp(name = "uniqueId")
     public void setViewUniqueId(SurfaceView view, String id) {
         view.setTag(id);
-        if (mAgoraPackage.get() != null) {
-            mAgoraPackage.get().addSurface(id, view);
-        }
-    }
+    }*/
 
     @Nullable
     @Override
@@ -79,7 +77,8 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         switch (commandId) {
             case COMMAND_SET_LOCAL_VIDEO: {
                 //view.saveImage();
-                mAgoraPackage.get().setLocalVideo(root, 0);
+                mAgoraModule.get().setupLocalVideo(root,
+                        args.getInt(0), args.getInt(1), args.getInt(2));
                 return;
             }
 

@@ -151,13 +151,14 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                 if (canCallack()) {
                     if (mAgoraPackage.get() == null) return;
 
+                    /*
                     SurfaceView view = mAgoraPackage.get().getSurfaceView("2222");
                     if (view == null) return;
 
                     view.setZOrderOnTop(true);
                     view.setZOrderMediaOverlay(true);
                     mRtcEngine.setupRemoteVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                    //mCallback.get().invoke(uid, width, height, elapsed);
+                    */
                 }
             }
         };
@@ -225,7 +226,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
 
         if (mInternalMethods.containsKey(api)) {
             if (api.equals("setupLocalVideo")) {
-                setupLocalVideo((String)parameters[0], ((Double)parameters[1]).intValue());
+                //setupLocalVideo((String)parameters[0], ((Double)parameters[1]).intValue());
             }
         } else {
             callAPI(api, parameters);
@@ -233,7 +234,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     }
 
     //@ReactMethod
-    private void setupLocalVideo(String key, int uid) {
+    /*private void setupLocalVideo(String key, int uid) {
         if (mAgoraPackage.get() == null) return;
 
         SurfaceView view = mAgoraPackage.get().getSurfaceView(key);
@@ -242,11 +243,12 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         mRtcEngine.setupLocalVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         view.setZOrderOnTop(true);
         view.setZOrderMediaOverlay(true);
-    }
+    }*/
 
-    public void setupLocalVideo(SurfaceView view, int uid) {
+    public void setupLocalVideo(SurfaceView view, int width, int height, int uid) {
         if (mAgoraPackage.get() == null) return;
 
+        view.getHolder().setFixedSize(width, height);
         mRtcEngine.setupLocalVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
     }
 
@@ -264,7 +266,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     public void removeView(String viewId) {
         if (mAgoraPackage.get() == null) return;
 
-        mAgoraPackage.get().removeSurfaceView(viewId);
+        //mAgoraPackage.get().removeSurfaceView(viewId);
     }
 
     private void initPublicAPI() {
