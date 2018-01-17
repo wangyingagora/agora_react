@@ -6,11 +6,16 @@ import android.view.SurfaceView;
 import com.agorareact.AgoraPackage;
 import com.agorareact.MainApplication;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import io.agora.rtc.RtcEngine;
 
@@ -20,6 +25,9 @@ import io.agora.rtc.RtcEngine;
 
 public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     public static final String REACT_CLASS = "SurfaceView";
+
+    public static final int COMMAND_SET_LOCAL_VIDEO = 1;
+
     private WeakReference<AgoraPackage> mAgoraPackage;
 
     public SurfaceViewManager(AgoraPackage agoraPackage) {
@@ -34,6 +42,8 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     @Override
     protected SurfaceView createViewInstance(ThemedReactContext reactContext) {
         SurfaceView surfaceView = RtcEngine.CreateRendererView(reactContext);
+        surfaceView.setZOrderOnTop(true);
+        surfaceView.setZOrderMediaOverlay(true);
         return surfaceView;
     }
 
@@ -52,6 +62,32 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         view.setTag(id);
         if (mAgoraPackage.get() != null) {
             mAgoraPackage.get().addSurface(id, view);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Map<String, Integer> getCommandsMap() {
+        Log.d("React"," View manager getCommandsMap:");
+        return MapBuilder.of(
+                "localVideo",
+                COMMAND_SET_LOCAL_VIDEO);
+    }
+
+    @Override
+    public void receiveCommand(SurfaceView root, int commandId, @Nullable ReadableArray args) {
+        switch (commandId) {
+            case COMMAND_SET_LOCAL_VIDEO: {
+                //view.saveImage();
+                mAgoraPackage.get().setLocalVideo(root, 0);
+                return;
+            }
+
+            default:
+                throw new IllegalArgumentException(String.format(
+                        "Unsupported command %d received by %s.",
+                        commandId,
+                        getClass().getSimpleName()));
         }
     }
 }

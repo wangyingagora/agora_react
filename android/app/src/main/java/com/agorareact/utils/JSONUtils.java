@@ -45,7 +45,7 @@ public class JSONUtils {
         return map;
     }
 
-    private static WritableArray convertJsonToArray(JSONArray jsonArray) throws JSONException {
+    public static WritableArray convertJsonToArray(JSONArray jsonArray) throws JSONException {
         WritableArray array = new WritableNativeArray();
 
         for (int i = 0; i < jsonArray.length(); i++) {

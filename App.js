@@ -5,7 +5,7 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, Image, ReactNative} from 'react-native'
+import { AppRegistry, Image, ReactNative, findNodeHandle} from 'react-native'
 import AgoraModule from './components/android/agora'
 import SurfaceView from './components/android/SurfaceView'
 
@@ -15,7 +15,8 @@ import {
   Text,
   Button,
   View,
-  Alert
+  Alert,
+  UIManager
 } from 'react-native';
 
 const instructions = Platform.select({
@@ -43,10 +44,15 @@ export default class App extends Component<{}> {
 
   _joinChannel() {
     //Alert.alert('You tapped the button!')
-    //var handle = ReactNative.findNodeHandle(this._surfaceView);
+    var reactTag = findNodeHandle(this._surfaceView);
     //Alert.alert(this._surfaceView.uniqueId + " come");
-
-    AgoraModule.callAPI('setupLocalVideo', ['1111', 0])
+    Alert.alert(reactTag + '')
+    //AgoraModule.callAPI('setupLocalVideo', [reactTag, 0])
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this._surfaceView),
+      UIManager.SurfaceView.Commands.localVideo,
+      [0]
+    );
     AgoraModule.callAPI('startPreview', [])
     //token, channelName, String optionalInfo, int optionalUid
     AgoraModule.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
@@ -62,7 +68,7 @@ export default class App extends Component<{}> {
 
     appId = "";
     AgoraModule.create(appId, (channel, uid, elapsed) => {
-      Alert.alert("uid " + channel);
+      //Alert.alert("uid " + channel);
     });
   
 

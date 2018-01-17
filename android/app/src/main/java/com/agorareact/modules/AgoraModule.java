@@ -244,6 +244,12 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         view.setZOrderMediaOverlay(true);
     }
 
+    public void setupLocalVideo(SurfaceView view, int uid) {
+        if (mAgoraPackage.get() == null) return;
+
+        mRtcEngine.setupLocalVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+    }
+
     //@ReactMethod
     private void joinChannel() {
         mRtcEngine.joinChannel(null, "1234", "ARCore with RtcEngine", 0);
