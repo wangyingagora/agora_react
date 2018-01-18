@@ -45,23 +45,12 @@ export default class App extends Component<{}> {
   _joinChannel() {
     //Alert.alert('You tapped the button!')
     var reactTag = findNodeHandle(this._surfaceView);
-    Alert.alert(reactTag + '')
+    //Alert.alert(reactTag + '')
 
     RtcEnine.setupLocalVideo(this._surfaceView, 240, 320, 0)
     RtcEnine.callAPI('startPreview', [])
     //token, channelName, String optionalInfo, int optionalUid
     RtcEnine.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
-
-    /*
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this._surfaceView),
-      UIManager.SurfaceView.Commands.localVideo,
-      [240, 320, 0]
-    );
-    AgoraModule.callAPI('startPreview', [])
-    //token, channelName, String optionalInfo, int optionalUid
-    AgoraModule.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
-    */
 
     /*
     AgoraModule.setupLocalVideo('1111', 0);
@@ -74,12 +63,18 @@ export default class App extends Component<{}> {
     //AgoraModule.show('Call java method', AgoraModule.SHORT);
 
     appId = "";
-    /*
-    AgoraModule.create(appId, (channel, uid, elapsed) => {
-    });
-    */
-    RtcEnine.create(appId, (channel, uid, elapsed) => {
-    });
+
+    var handler = {
+      'onJoinChannelSuccess': (channel, uid, elapsed) => {
+        Alert.alert(channel + '')
+      },
+      'onRejoinChannelSuccess': (channel, uid, elapsed) => {
+      },
+      'onError': (error) => {
+        Alert.alert(error + '')
+      }
+    };
+    RtcEnine.create(appId, handler);
 
     let pic = {
       uri: 'http://g.hiphotos.baidu.com/image/pic/item/241f95cad1c8a786c7dedcc46e09c93d71cf5007.jpg'
@@ -89,17 +84,14 @@ export default class App extends Component<{}> {
       <View style = {styles.container} >
         <Greeeting text='Greeting from react world' />
         <SurfaceView 
-          uniqueId='1111'
           style = { {width: 240, height: 320}}
           ref={component => this._surfaceView = component}
         />
         <View style = {styles.remote} >
           <SurfaceView 
-            uniqueId='2222'
             style = { {width: 96, height: 96}}
           />
           <SurfaceView 
-            uniqueId='3333'
             style = { {width: 96, height: 96}}
           />
         </View>

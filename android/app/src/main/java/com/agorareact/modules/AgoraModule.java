@@ -6,12 +6,16 @@ import android.view.SurfaceView;
 import android.widget.Toast;
 
 import com.agorareact.AgoraPackage;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,21 +90,37 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
                 if (canCallack()) {
-                    mCallback.get().invoke(channel, uid, elapsed);
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onJoinChannelSuccess");
+                    map.putString("channel", channel);
+                    map.putInt("uid", uid);
+                    map.putInt("elapsed", elapsed);
+                    //mCallback.get().invoke(channel, uid, elapsed);
+                    mCallback.get().invoke(map);
                 }
             }
 
             @Override
             public void onRejoinChannelSuccess(String channel, int uid, int elapsed) {
                 if (canCallack()) {
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onRejoinChannelSuccess");
+                    map.putString("channel", channel);
+                    map.putInt("uid", uid);
+                    map.putInt("elapsed", elapsed);
                     //mCallback.get().invoke(channel, uid, elapsed);
+                    mCallback.get().invoke(map);
                 }
             }
 
             @Override
             public void onWarning(int warn) {
                 if (canCallack()) {
-                    //mCallback.get().invoke(warn);
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onWarning");
+                    map.putInt("warn", warn);
+                    //mCallback.get().invoke(channel, uid, elapsed);
+                    //mCallback.get().invoke(map);
                 }
             }
 
@@ -161,6 +181,13 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     */
                 }
             }
+
+            @Override
+            public void onApiCallExecuted(int error, String api, String result) {
+                if (canCallack()) {
+
+                }
+            }
         };
 
         try {
@@ -182,7 +209,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             //mRtcEngine.setVideoSource(mSource);
             //mRtcEngine.setLocalVideoRenderer(mRender);
 
-            mRtcEngine.startPreview();
+            //mRtcEngine.startPreview();
 
         } catch (Exception ex) {
             Log.e("RCTNative", ex.toString());
