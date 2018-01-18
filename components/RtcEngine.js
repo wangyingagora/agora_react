@@ -12,10 +12,9 @@ import {
 var RtcEnine = {
     create(appId: string, callback: any) {
         AgoraModule.create(appId, (data) => {
-            //Alert.alert(callback['onRejoinChannelSuccess'])
-            //callback['onError']('aaafdf')
-            //Alert.alert(data.type + '-' + data.channel + '-' + data.uid + '-' + data.elapsed)
-            callback[data.type](data.channel, data.uid, data.elapsed)
+            if (data.type.localeCompare('onJoinChannelSuccess') == 0) {
+                callback[data.type](data.channel, data.uid, data.elapsed)
+            }
         });
     },
     
