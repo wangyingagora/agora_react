@@ -48,6 +48,7 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         return surfaceView;
     }
 
+    /*
     @ReactProp(name = "width", defaultInt = 360)
     public void setWidth(SurfaceView view, int width) {
         view.getHolder().setFixedSize(width, 480);
@@ -58,7 +59,7 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         view.getHolder().setFixedSize(360, height);
     }
 
-    /*@ReactProp(name = "uniqueId")
+    @ReactProp(name = "uniqueId")
     public void setViewUniqueId(SurfaceView view, String id) {
         view.setTag(id);
     }*/
