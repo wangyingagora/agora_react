@@ -72,7 +72,14 @@ export default class App extends Component<{}> {
       },
       'onError': (error) => {
         Alert.alert(error + '')
-      }
+      },
+      'onUserJoined': (uid, elapsed) => {
+      },
+      'onUserOffline': (uid, reason) => {
+      },
+      'onFirstRemoteVideoDecoded': (uid, width, height, elapsed) => {
+
+      },
     };
     RtcEnine.create(appId, handler);
 

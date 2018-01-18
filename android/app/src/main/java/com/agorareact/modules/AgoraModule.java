@@ -92,9 +92,9 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                 if (canCallack()) {
                     WritableMap map = Arguments.createMap();
                     map.putString("type", "onJoinChannelSuccess");
-                    map.putString("channel", channel);
-                    map.putInt("uid", uid);
-                    map.putInt("elapsed", elapsed);
+                    map.putString("p0", channel);
+                    map.putInt("p1", uid);
+                    map.putInt("p2", elapsed);
                     //mCallback.get().invoke(channel, uid, elapsed);
                     mCallback.get().invoke(map);
                 }
@@ -105,10 +105,9 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                 if (canCallack()) {
                     WritableMap map = Arguments.createMap();
                     map.putString("type", "onRejoinChannelSuccess");
-                    map.putString("channel", channel);
-                    map.putInt("uid", uid);
-                    map.putInt("elapsed", elapsed);
-                    //mCallback.get().invoke(channel, uid, elapsed);
+                    map.putString("p0", channel);
+                    map.putInt("p1", uid);
+                    map.putInt("p2", elapsed);
                     mCallback.get().invoke(map);
                 }
             }
@@ -118,8 +117,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                 if (canCallack()) {
                     WritableMap map = Arguments.createMap();
                     map.putString("type", "onWarning");
-                    map.putInt("warn", warn);
-                    //mCallback.get().invoke(channel, uid, elapsed);
+                    map.putInt("p0", warn);
                     //mCallback.get().invoke(map);
                 }
             }
@@ -127,7 +125,10 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             @Override
             public void onError(int err) {
                 if (canCallack()) {
-                    //mCallback.get().invoke(err);
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onError");
+                    map.putInt("p0", err);
+                    mCallback.get().invoke(map);
                 }
             }
 
@@ -155,14 +156,22 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             @Override
             public void onUserJoined(int uid, int elapsed) {
                 if (canCallack()) {
-                    //mCallback.get().invoke(uid, elapsed);
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onUserJoined");
+                    map.putInt("p0", uid);
+                    map.putInt("p1", elapsed);
+                    mCallback.get().invoke(map);
                 }
             }
 
             @Override
             public void onUserOffline(int uid, int reason) {
                 if (canCallack()) {
-                    //mCallback.get().invoke(uid, reason);
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onUserOffline");
+                    map.putInt("p0", uid);
+                    map.putInt("p1", reason);
+                    mCallback.get().invoke(map);
                 }
             }
 
@@ -171,6 +180,13 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                 if (canCallack()) {
                     if (mAgoraPackage.get() == null) return;
 
+                    WritableMap map = Arguments.createMap();
+                    map.putString("type", "onFirstRemoteVideoDecoded");
+                    map.putInt("p0", uid);
+                    map.putInt("p1", width);
+                    map.putInt("p2", height);
+                    map.putInt("p3", elapsed);
+                    mCallback.get().invoke(map);
                     /*
                     SurfaceView view = mAgoraPackage.get().getSurfaceView("2222");
                     if (view == null) return;
@@ -185,7 +201,6 @@ public class AgoraModule extends ReactContextBaseJavaModule {
             @Override
             public void onApiCallExecuted(int error, String api, String result) {
                 if (canCallack()) {
-
                 }
             }
         };
