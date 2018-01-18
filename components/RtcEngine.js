@@ -49,6 +49,14 @@ var RtcEnine = {
         );
     },
 
+    setupRemoteVideo(view: SurfaceView, width: number, height: height, uid: number) {
+        UIManager.dispatchViewManagerCommand(
+            findNodeHandle(view),
+            UIManager.SurfaceView.Commands.remoteVideo,
+            [width, height, uid]
+        );
+    },
+
     callAPI(api: string, args: Array<any>) {
         AgoraModule.callAPI(api, args)
     },

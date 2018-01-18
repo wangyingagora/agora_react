@@ -294,6 +294,13 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         mRtcEngine.setupLocalVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
     }
 
+    public void setupRemoteVideo(SurfaceView view, int width, int height, int uid) {
+        if (mAgoraPackage.get() == null) return;
+
+        view.getHolder().setFixedSize(width, height);
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+    }
+
     //@ReactMethod
     private void joinChannel() {
         mRtcEngine.joinChannel(null, "1234", "ARCore with RtcEngine", 0);

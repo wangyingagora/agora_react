@@ -47,7 +47,7 @@ export default class App extends Component<{}> {
     var reactTag = findNodeHandle(this._surfaceView);
     //Alert.alert(reactTag + '')
 
-    RtcEnine.setupLocalVideo(this._surfaceView, 240, 320, 0)
+    RtcEnine.setupLocalVideo(this._localView, 240, 320, 0)
     RtcEnine.callAPI('startPreview', [])
     //token, channelName, String optionalInfo, int optionalUid
     RtcEnine.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
@@ -66,19 +66,19 @@ export default class App extends Component<{}> {
 
     var handler = {
       'onJoinChannelSuccess': (channel, uid, elapsed) => {
-        Alert.alert(channel + '')
+        //Alert.alert(channel + '')
       },
       'onRejoinChannelSuccess': (channel, uid, elapsed) => {
       },
       'onError': (error) => {
-        Alert.alert(error + '')
+        //Alert.alert(error + '')
       },
       'onUserJoined': (uid, elapsed) => {
       },
       'onUserOffline': (uid, reason) => {
       },
       'onFirstRemoteVideoDecoded': (uid, width, height, elapsed) => {
-
+         RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
       },
     };
     RtcEnine.create(appId, handler);
@@ -92,14 +92,12 @@ export default class App extends Component<{}> {
         <Greeeting text='Greeting from react world' />
         <SurfaceView 
           style = { {width: 240, height: 320}}
-          ref={component => this._surfaceView = component}
+          ref={component => this._localView = component}
         />
         <View style = {styles.remote} >
           <SurfaceView 
             style = { {width: 96, height: 96}}
-          />
-          <SurfaceView 
-            style = { {width: 96, height: 96}}
+            ref={component => this._remoteView1 = component}
           />
         </View>
         <Button

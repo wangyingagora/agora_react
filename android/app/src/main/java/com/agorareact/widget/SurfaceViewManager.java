@@ -28,6 +28,7 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
     public static final String REACT_CLASS = "SurfaceView";
 
     public static final int COMMAND_SET_LOCAL_VIDEO = 1;
+    public static final int COMMAND_SET_REMOTE_VIDEO = 2;
 
     private WeakReference<AgoraModule> mAgoraModule;
 
@@ -70,7 +71,9 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
         Log.d("React"," View manager getCommandsMap:");
         return MapBuilder.of(
                 "localVideo",
-                COMMAND_SET_LOCAL_VIDEO);
+                COMMAND_SET_LOCAL_VIDEO,
+                "remoteVideo",
+                COMMAND_SET_REMOTE_VIDEO);
     }
 
     @Override
@@ -79,6 +82,11 @@ public class SurfaceViewManager extends SimpleViewManager<SurfaceView> {
             case COMMAND_SET_LOCAL_VIDEO: {
                 //view.saveImage();
                 mAgoraModule.get().setupLocalVideo(root,
+                        args.getInt(0), args.getInt(1), args.getInt(2));
+                return;
+            }
+            case COMMAND_SET_REMOTE_VIDEO: {
+                mAgoraModule.get().setupRemoteVideo(root,
                         args.getInt(0), args.getInt(1), args.getInt(2));
                 return;
             }

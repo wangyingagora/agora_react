@@ -10,7 +10,7 @@ var iface = {
         //resizeMode: PropTypes.oneOf(['cover', 'contain', 'stretch']),
         width: PropTypes.number,
         height: PropTypes.number,
-        uniqueId: PropTypes.string,
+        //uniqueId: PropTypes.string,
         ...ViewPropTypes, // include the default view properties
     },
 };
