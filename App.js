@@ -6,8 +6,8 @@
 
 import React, { Component } from 'react';
 import { AppRegistry, Image, ReactNative, findNodeHandle} from 'react-native'
-import AgoraModule from './components/android/agora'
 import SurfaceView from './components/android/SurfaceView'
+import RtcEnine from './components/RtcEngine'
 
 import {
   Platform,
@@ -45,9 +45,14 @@ export default class App extends Component<{}> {
   _joinChannel() {
     //Alert.alert('You tapped the button!')
     var reactTag = findNodeHandle(this._surfaceView);
-    //Alert.alert(this._surfaceView.uniqueId + " come");
     Alert.alert(reactTag + '')
-    //AgoraModule.callAPI('setupLocalVideo', [reactTag, 0])
+
+    RtcEnine.setupLocalVideo(this._surfaceView, 240, 320, 0)
+    RtcEnine.callAPI('startPreview', [])
+    //token, channelName, String optionalInfo, int optionalUid
+    RtcEnine.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
+
+    /*
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this._surfaceView),
       UIManager.SurfaceView.Commands.localVideo,
@@ -56,6 +61,8 @@ export default class App extends Component<{}> {
     AgoraModule.callAPI('startPreview', [])
     //token, channelName, String optionalInfo, int optionalUid
     AgoraModule.callAPI('joinChannel', ['', 'AgoraChannel', '', 0])
+    */
+
     /*
     AgoraModule.setupLocalVideo('1111', 0);
     AgoraModule.startPreview();
@@ -64,13 +71,15 @@ export default class App extends Component<{}> {
   }
 
   render() {
-    AgoraModule.show('Call java method', AgoraModule.SHORT);
+    //AgoraModule.show('Call java method', AgoraModule.SHORT);
 
     appId = "";
+    /*
     AgoraModule.create(appId, (channel, uid, elapsed) => {
-      //Alert.alert("uid " + channel);
     });
-  
+    */
+    RtcEnine.create(appId, (channel, uid, elapsed) => {
+    });
 
     let pic = {
       uri: 'http://g.hiphotos.baidu.com/image/pic/item/241f95cad1c8a786c7dedcc46e09c93d71cf5007.jpg'
