@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { AppRegistry, Image, ReactNative, findNodeHandle} from 'react-native'
 import SurfaceView from './components/android/SurfaceView'
+import APPID from './components/android/Constants' 
 import RtcEnine from './components/RtcEngine'
 
 import {
@@ -62,11 +63,9 @@ export default class App extends Component<{}> {
   render() {
     //AgoraModule.show('Call java method', AgoraModule.SHORT);
 
-    appId = "";
-
     var handler = {
       'onJoinChannelSuccess': (channel, uid, elapsed) => {
-        //Alert.alert(channel + '')
+        Alert.alert(channel + '')
       },
       'onRejoinChannelSuccess': (channel, uid, elapsed) => {
       },
@@ -81,7 +80,7 @@ export default class App extends Component<{}> {
          RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
       },
     };
-    RtcEnine.create(appId, handler);
+    RtcEnine.create(APPID, handler);
 
     let pic = {
       uri: 'http://g.hiphotos.baidu.com/image/pic/item/241f95cad1c8a786c7dedcc46e09c93d71cf5007.jpg'
