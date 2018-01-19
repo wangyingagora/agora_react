@@ -1,6 +1,7 @@
 package com.agorareact.modules;
 
 import android.graphics.Rect;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Toast;
@@ -8,7 +9,9 @@ import android.widget.Toast;
 import com.agorareact.AgoraPackage;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
@@ -53,7 +56,9 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     private Map<String, Boolean> mInternalMethods = new HashMap<>();
 
     private WeakReference<AgoraPackage> mAgoraPackage;
-    private WeakReference<Callback> mCallback;
+
+    private JavaScriptModule mJSModule;
+    private DeviceEventManagerModule.RCTDeviceEventEmitter eventEmitter;
 
     public AgoraModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -84,115 +89,92 @@ public class AgoraModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void create(String appId, Callback callback) {
-        mCallback = new WeakReference<Callback>(callback);
-
         mHandler = new IRtcEngineEventHandler() {
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onJoinChannelSuccess");
-                    map.putString("p0", channel);
-                    map.putInt("p1", uid);
-                    map.putInt("p2", elapsed);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                //map.putString("type", "onJoinChannelSuccess");
+                map.putString("p0", channel);
+                map.putInt("p1", uid);
+                map.putInt("p2", elapsed);
+                //mCallback.get().invoke(map);
+                mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("onJoinChannelSuccess", map);
             }
 
             @Override
             public void onRejoinChannelSuccess(String channel, int uid, int elapsed) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onRejoinChannelSuccess");
-                    map.putString("p0", channel);
-                    map.putInt("p1", uid);
-                    map.putInt("p2", elapsed);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                map.putString("type", "onRejoinChannelSuccess");
+                map.putString("p0", channel);
+                map.putInt("p1", uid);
+                map.putInt("p2", elapsed);
+                //mCallback.get().invoke(map);
             }
 
             @Override
             public void onWarning(int warn) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onWarning");
-                    map.putInt("p0", warn);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                map.putString("type", "onWarning");
+                map.putInt("p0", warn);
+                //mCallback.get().invoke(map);
             }
 
             @Override
             public void onError(int err) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onError");
-                    map.putInt("p0", err);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                map.putString("type", "onError");
+                map.putInt("p0", err);
+                //mCallback.get().invoke(map);
             }
 
             @Override
             public void onCameraFocusAreaChanged(Rect rect) {
-                if (canCallack()) {
-                    //mCallback.get().invoke(rect);
-                }
             }
 
             @Override
             public void onLeaveChannel(RtcStats stats) {
-                if (canCallack()) {
-                    //mCallback.get().invoke(stats);
-                }
             }
 
             @Override
             public void onRtcStats(RtcStats stats) {
-                if (canCallack()) {
-                    //mCallback.get().invoke(stats);
-                }
             }
 
             @Override
             public void onUserJoined(int uid, int elapsed) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onUserJoined");
-                    map.putInt("p0", uid);
-                    map.putInt("p1", elapsed);
-                    mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                //map.putString("type", "onUserJoined");
+                map.putInt("p0", uid);
+                map.putInt("p1", elapsed);
+                //mCallback.get().invoke(map);
+                mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit("onUserJoined", map);
             }
 
             @Override
             public void onUserOffline(int uid, int reason) {
-                if (canCallack()) {
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onUserOffline");
-                    map.putInt("p0", uid);
-                    map.putInt("p1", reason);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                map.putString("type", "onUserOffline");
+                map.putInt("p0", uid);
+                map.putInt("p1", reason);
+                //mCallback.get().invoke(map);
             }
 
             @Override
             public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
-                if (canCallack()) {
-                    if (mAgoraPackage.get() == null) return;
+                if (mAgoraPackage.get() == null) return;
 
-                    WritableMap map = Arguments.createMap();
-                    map.putString("type", "onFirstRemoteVideoDecoded");
-                    map.putInt("p0", uid);
-                    map.putInt("p1", width);
-                    map.putInt("p2", height);
-                    map.putInt("p3", elapsed);
-                    //mCallback.get().invoke(map);
-                }
+                WritableMap map = Arguments.createMap();
+                map.putString("type", "onFirstRemoteVideoDecoded");
+                map.putInt("p0", uid);
+                map.putInt("p1", width);
+                map.putInt("p2", height);
+                map.putInt("p3", elapsed);
+                //mCallback.get().invoke(map);
             }
 
             @Override
             public void onApiCallExecuted(int error, String api, String result) {
-                if (canCallack()) {
-                }
             }
         };
 
@@ -325,11 +307,6 @@ public class AgoraModule extends ReactContextBaseJavaModule {
         mInternalMethods.put("setupLocalVideo", true);
     }
 
-    private boolean canCallack() {
-        if (mCallback == null || mCallback.get() == null) return false;
-        return true;
-    }
-
     private void callAPI(String api, Object[] args) {
         try {
             Method m = mMethods.get(api);
@@ -415,5 +392,14 @@ public class AgoraModule extends ReactContextBaseJavaModule {
     private void callAPI7(Method method, Object[] args) throws InvocationTargetException,
             IllegalAccessException {
         method.invoke(mRtcEngine, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+    }
+
+    private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
+        synchronized (this) {
+            if (mJSModule == null) {
+                mJSModule = reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+            }
+        }
+        ((DeviceEventManagerModule.RCTDeviceEventEmitter)mJSModule).emit(eventName, params);
     }
 }

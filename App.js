@@ -17,7 +17,8 @@ import {
   Button,
   View,
   Alert,
-  UIManager
+  UIManager,
+  DeviceEventEmitter
 } from 'react-native';
 
 const instructions = Platform.select({
@@ -37,14 +38,14 @@ class Greeeting extends Component {
 }
 
 export default class App extends Component<{}> {
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
   componentWillUnmount() {
     //AgoraModule.removeView('1111');
   }
 
   _joinChannel() {
-    //Alert.alert('You tapped the button!')
     var reactTag = findNodeHandle(this._surfaceView);
     //Alert.alert(reactTag + '')
 
@@ -65,15 +66,12 @@ export default class App extends Component<{}> {
 
     var handler = {
       'onJoinChannelSuccess': (channel, uid, elapsed) => {
-        //Alert.alert(channel + '')
       },
       'onRejoinChannelSuccess': (channel, uid, elapsed) => {
       },
       'onError': (error) => {
-        //Alert.alert(error + '')
       },
       'onUserJoined': (uid, elapsed) => {
-        //Alert.alert(uid + '')
         RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
       },
       'onUserOffline': (uid, reason) => {
