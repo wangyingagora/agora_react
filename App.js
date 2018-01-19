@@ -65,7 +65,7 @@ export default class App extends Component<{}> {
 
     var handler = {
       'onJoinChannelSuccess': (channel, uid, elapsed) => {
-        Alert.alert(channel + '')
+        //Alert.alert(channel + '')
       },
       'onRejoinChannelSuccess': (channel, uid, elapsed) => {
       },
@@ -73,11 +73,13 @@ export default class App extends Component<{}> {
         //Alert.alert(error + '')
       },
       'onUserJoined': (uid, elapsed) => {
+        //Alert.alert(uid + '')
+        RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
       },
       'onUserOffline': (uid, reason) => {
       },
       'onFirstRemoteVideoDecoded': (uid, width, height, elapsed) => {
-         RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
+         //RtcEnine.setupRemoteVideo(this._remoteView1, 96, 96, uid)
       },
     };
     RtcEnine.create(APPID, handler);

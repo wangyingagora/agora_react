@@ -95,8 +95,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     map.putString("p0", channel);
                     map.putInt("p1", uid);
                     map.putInt("p2", elapsed);
-                    //mCallback.get().invoke(channel, uid, elapsed);
-                    mCallback.get().invoke(map);
+                    //mCallback.get().invoke(map);
                 }
             }
 
@@ -108,7 +107,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     map.putString("p0", channel);
                     map.putInt("p1", uid);
                     map.putInt("p2", elapsed);
-                    mCallback.get().invoke(map);
+                    //mCallback.get().invoke(map);
                 }
             }
 
@@ -128,7 +127,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     WritableMap map = Arguments.createMap();
                     map.putString("type", "onError");
                     map.putInt("p0", err);
-                    mCallback.get().invoke(map);
+                    //mCallback.get().invoke(map);
                 }
             }
 
@@ -171,7 +170,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     map.putString("type", "onUserOffline");
                     map.putInt("p0", uid);
                     map.putInt("p1", reason);
-                    mCallback.get().invoke(map);
+                    //mCallback.get().invoke(map);
                 }
             }
 
@@ -186,15 +185,7 @@ public class AgoraModule extends ReactContextBaseJavaModule {
                     map.putInt("p1", width);
                     map.putInt("p2", height);
                     map.putInt("p3", elapsed);
-                    mCallback.get().invoke(map);
-                    /*
-                    SurfaceView view = mAgoraPackage.get().getSurfaceView("2222");
-                    if (view == null) return;
-
-                    view.setZOrderOnTop(true);
-                    view.setZOrderMediaOverlay(true);
-                    mRtcEngine.setupRemoteVideo(new VideoCanvas(view, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                    */
+                    //mCallback.get().invoke(map);
                 }
             }
 
