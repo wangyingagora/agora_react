@@ -1,6 +1,6 @@
 'use strict';
 
-import AgoraModule from './android/agora'
+import AgoraModule from './android/AgoraAndroidModule'
 import SurfaceView from './android/SurfaceView'
 
 import {
